@@ -3,10 +3,9 @@ import os, sys
 
 from PIL import Image
 
-START_MSG = 'This script processes tifs into small jpgs.'
-
 def main():
-    print(START_MSG) # tell user what app will do
+    # tell user what app will do
+    print('This script processes tifs into small jpgs.')
 
     # get the src and dst folders from user
     path_to_tifs = get_path('Enter a path to your tifs.')
@@ -25,12 +24,23 @@ def main():
     print('Ok, Scanning...')
 
     # get all the tifs in the tifs folder
-    all_tifs = get_all_files(path_to_tifs, '.tif')
-    jpg_names = []
+    all_tifs, duplicates = get_all_files(path_to_tifs, '.tif')
+
+    # warn the user of duplicates and exit
+    if duplicates:
+        print(
+            'The following files are duplicates and'
+            ' would be overwritten when processing.\n'
+            'Please deal with them and try again.'
+            )
+        for dup in duplicates:
+            print(dup)
+        return
 
     # get all the jpg names to check against
+    jpg_names = []
     for path_to_check in paths_to_check:
-        for jpg_path in get_all_files(path_to_check, '.jpg'):
+        for jpg_path in get_all_files(path_to_check, '.jpg')[0]:
             jpg_names.append(just_the_name(jpg_path))
 
     # create a list of tifs to process, excluding those which match jpg names
@@ -49,6 +59,7 @@ def main():
 
     input('Success!!')
 
+# helpers
 
 def process(tif_path, dst_dir, size=800):
     '''take in an image, resize it, and save it out.'''
@@ -62,25 +73,25 @@ def just_the_name(path):
     name = os.path.splitext(os.path.basename(path))[0]
     return name
 
-
 def get_all_files(directory, ext):
-    """return a list of all file paths with a given ext in a given directory.
+    """return a tuple of all file paths with a given ext in a given directory
+    and all of the duplicates.
     ext should follow the format ".jpg" - lowercase and include the dot.
     """
     exception_message = '"{}" is a duplicate. pls deal w this.'
     file_paths = []
     filenames = []
+    duplicates = []
     for root, dirs, files in os.walk(directory):
         for file in files:
-            name, ext = os.path.splitext(file)
-            if ext.lower() == ext:
+            name, extension = os.path.splitext(file)
+            if extension.lower() == ext:
                 if file in filenames:
-                    raise DuplicateFilename(exception_message.format(file))
+                    duplicates.append(file)
                 filenames.append(file)
                 file_path = os.path.join(root, file)
                 file_paths.append(file_path)
-    return file_paths
-
+    return file_paths, duplicates
 
 def get_path(msg):
     """ask user for a path and validate the response"""
@@ -112,11 +123,6 @@ def print_progress(iteration, total):
     # Print New Line on Complete
     if iteration == total:
         print()
-
-class DuplicateFilename(Exception):
-    """raised when a duplicate file is found."""
-    pass
-
 
 if __name__ == '__main__':
     main()
