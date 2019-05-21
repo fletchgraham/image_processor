@@ -49,12 +49,13 @@ def main():
     ]
 
     print('Found {} new tifs.'.format(len(tifs_to_process)))
-    input('Press Enter to process. ')
+    size = int(input('Now enter a size to fit. '))
+    input('Great! now hit Enter and processing will begin. ')
 
     # process the tifs into jpgs and print progress bar after each one
     number_of_tifs = len(tifs_to_process)
     for index, tif_path in enumerate(tifs_to_process):
-        process(tif_path, output_path)
+        process(tif_path, output_path, size=size)
         print_progress(index, number_of_tifs)
 
     input('Success!!')
