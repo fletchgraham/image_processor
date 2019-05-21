@@ -11,7 +11,7 @@ def main():
     output_path = get_path('Where should the processed jpgs go?')
 
     # get other folders to check for existing images
-    paths_to_check = []
+    paths_to_check = [output_path]
     other_paths = input(
         'Do you want to check another folder for existing jpgs? y/n '
         )
@@ -20,23 +20,33 @@ def main():
         paths_to_check.append(p)
         other_paths = input('and another? y/n ')
 
+    print('Ok, Scanning...')
+
     # get all the tifs in the tifs folder
-    tif_paths_to_process = get_all_tifs(path_to_tifs)
+    all_tifs = get_all_files(path_to_tifs, '.tif')
+    jpgs_to_compare = []
+
+    for path_to_check in paths_to_check:
+        for jpg in get_all_files(path_to_check, '.jpg'):
+            jpgs_to_compare.append(jpg)
+
+    print('found {} tifs.'.format(len(all_tifs)))
+    print('found {} jpgs.'.format(len(jpgs_to_compare)))
 
 
-    print(tif_paths_to_process)
-    input('yay!')
-
-def get_all_tifs(path_to_tifs):
-    """return a list of all tif paths in a given directory."""
-    tif_paths = []
-    for root, dirs, files in os.walk(path_to_tifs):
+def get_all_files(directory, ext):
+    """return a list of all file paths with a given ext in a given directory.
+    ext should follow the format ".jpg" - lowercase and include the dot.
+    """
+    file_paths = []
+    for root, dirs, files in os.walk(directory):
         for file in files:
             name, ext = os.path.splitext(file)
-            if ext.lower() == '.tif':
-                tif_path = os.path.join(root, file)
-                tif_paths.append(tif_path)
-    return tif_paths
+            if ext.lower() == ext:
+                file_path = os.path.join(root, file)
+                file_paths.append(file_path)
+    return file_paths
+
 
 def get_path(msg):
     """ask user for a path and validate the response"""
