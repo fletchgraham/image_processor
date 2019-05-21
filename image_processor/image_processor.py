@@ -24,14 +24,23 @@ def main():
 
     # get all the tifs in the tifs folder
     all_tifs = get_all_files(path_to_tifs, '.tif')
-    jpgs_to_compare = []
+    jpg_names = []
 
     for path_to_check in paths_to_check:
-        for jpg in get_all_files(path_to_check, '.jpg'):
-            jpgs_to_compare.append(jpg)
+        for jpg_path in get_all_files(path_to_check, '.jpg'):
+            jpg_names.append(just_the_name(jpg_path))
 
-    print('found {} tifs.'.format(len(all_tifs)))
-    print('found {} jpgs.'.format(len(jpgs_to_compare)))
+    tifs_to_process = [
+        x for x in all_tifs if not just_the_name(x) in jpg_names
+    ]
+
+    print('found {} new tifs.'.format(len(tifs_to_process)))
+    input('yey')
+
+def just_the_name(path):
+    """return just the filename, no extension."""
+    name = os.path.splitext(os.path.basename(path))[0]
+    return name
 
 
 def get_all_files(directory, ext):
