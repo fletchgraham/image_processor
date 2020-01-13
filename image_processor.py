@@ -8,8 +8,8 @@ def main():
     print('This script processes images into small jpgs.')
 
     # get the src and dst folders from user
-    target_dir = os.getcwd()
-    output_path = os.path.join(target_dir, 'jpg')
+    source_dir = os.getcwd()
+    output_dir = os.path.join(source_dir, 'jpg')
 
     print('Ok, Scanning...')
 
@@ -17,7 +17,7 @@ def main():
 
     images_to_process = [
         x for x
-        in os.listdir(target_dir)
+        in os.listdir(source_dir)
         if os.path.splitext(x)[1].lower() in img_exts
         ]
 
@@ -28,11 +28,14 @@ def main():
     size = int(input('Now enter a size to fit: '))
     input('Great! now hit Enter and processing will begin. ')
 
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     # process the tifs into jpgs and print progress bar after each one
     total = len(images_to_process)
     for index, img in enumerate(images_to_process):
-        img_path = os.path.join(target_dir, img)
-        process(img_path, output_path, size=size)
+        img_path = os.path.join(source_dir, img)
+        process(img_path, output_dir, size=size)
         print_progress(index, total)
 
     input('Success!!')

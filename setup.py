@@ -6,6 +6,6 @@ setup(
     install_requires=['Pillow'],
     entry_points = {
         'console_scripts': [
-            'img = image_processor.image_processor:main'
+            'img = image_processor:main'
         ]
     })
