@@ -1,7 +1,5 @@
 venv/
 
-imgs/
-
 *.pyc
 __pycache__/
 
@@ -14,3 +12,5 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+.vscode/
