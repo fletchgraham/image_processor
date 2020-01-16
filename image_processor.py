@@ -47,6 +47,7 @@ def process(img_path, dst_dir, size=800):
     dst = os.path.join(dst_dir, just_the_name(img_path) + '.jpg')
     image = Image.open(img_path)
     image.thumbnail((size, size))
+    image = image.convert('RGB')
     image.save(dst)
 
 def just_the_name(path):
